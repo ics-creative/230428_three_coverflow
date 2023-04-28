@@ -37,6 +37,7 @@ document.body.appendChild(renderer.domElement);
 // インプット要素の制御
 const elementInput = document.querySelector("input#rangeSlider");
 elementInput.addEventListener("input", onInputChange);
+elementInput.focus()
 
 // マウスホイール対応
 window.addEventListener(
@@ -54,21 +55,21 @@ window.addEventListener(
  * @author IKEDA Yasunobu
  */
 function init() {
-  // カード用ライト
+  // ライト
   const pointLight = new THREE.PointLight(0xffffff, 4, 1000);
   pointLight.position.set(0, 0, 500);
-  scene.add(pointLight); // Add the light source to the scene.
+  scene.add(pointLight);
 
   // Planeの作成
   for (let i = 0; i < MAX_SLIDE; i++) {
     // カード
-    const containerCard = new Card(i);
+    const card = new Card(i);
 
     // 3Dシーンに追加
-    scene.add(containerCard);
+    scene.add(card);
 
     // 配列に参照の保存
-    cards[i] = containerCard;
+    cards[i] = card;
   }
   //  カメラの位置
   camera.position.z = 900;
@@ -142,25 +143,26 @@ function moveSlide(id) {
       targetRot = 0;
     }
 
-    // 対象のPlaneの参照をpに格納
-    const p = cards[i];
+    // 対象のカードの参照
+    const card = cards[i];
 
-    // ちょっと強引に実装
-    if (p.timeline) {
-      p.timeline.paused = true;
-    }
+    // タイムラインを作成
+    // 上書き可能な指定とする
+    const timeline = gsap.timeline({ overwrite: true });
 
-    // 変換後のコード
-    const timeline = gsap
-      .timeline()
-      .to(p.rotation, { y: targetRot, duration: 0.9, ease: "expo.out" }, 0)
-      .to(
-        p.position,
-        { x: targetX, z: -1 * targetZ, duration: 1.8, ease: "expo.out" },
-        0
-      )
-      .play();
-    p.timeline = timeline;
+    // 配置座標を指定
+    timeline.to(
+      card.position,
+      { x: targetX, z: -1 * targetZ, duration: 1.8, ease: "expo.out" },
+      0
+    );
+
+    // 角度を動かす
+    timeline.to(
+      card.rotation,
+      { y: targetRot, duration: 0.9, ease: "expo.out" },
+      0
+    );
   }
 
   currentPage = id;
@@ -184,7 +186,6 @@ function tick() {
  * カバーフローのカード
  */
 class Card extends THREE.Object3D {
-  timeline;
 
   /**
    * @param index {number}
@@ -194,32 +195,28 @@ class Card extends THREE.Object3D {
 
     const texture = new THREE.TextureLoader().load("./imgs/" + index + ".jpg");
 
-    // 反射面の作成
-    const textureOpt = new THREE.TextureLoader().load(
-      "./imgs/" + index + ".jpg"
-    );
+    // 上面
 
     // マテリアルの作成
     const material = new THREE.MeshLambertMaterial({
       map: texture,
     });
-    const materialOpt = new THREE.MeshLambertMaterial({
-      map: textureOpt,
-      transparent: true,
-      side: THREE.BackSide,
-    });
-    materialOpt.opacity = 0.2;
 
-    // 上面
     const planeTop = new THREE.Mesh(
-      new THREE.PlaneGeometry(ITEM_W, ITEM_H, 1, 1),
+      new THREE.PlaneGeometry(ITEM_W, ITEM_H),
       material
     );
     this.add(planeTop);
 
     // 反射面
+    const materialOpt = new THREE.MeshLambertMaterial({
+      map: texture,
+      transparent: true,
+      side: THREE.BackSide,
+    });
+    materialOpt.opacity = 0.2;
     const planeBottom = new THREE.Mesh(
-      new THREE.PlaneGeometry(ITEM_W, ITEM_H, 1, 1),
+      new THREE.PlaneGeometry(ITEM_W, ITEM_H),
       materialOpt
     );
     planeBottom.rotation.y = 180 * (Math.PI / 180);
