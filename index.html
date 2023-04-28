@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="google" value="notranslate" />
+    <title>Three.js Coverflow - ICS</title>
+    <link rel="stylesheet" href="style.css" />
+    <!-- ライブラリ読み込み -->
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://unpkg.com/three@0.151.3/build/three.module.js",
+          "three/addons/": "https://unpkg.com/three@0.151.3/examples/jsm/"
+        }
+      }
+    </script>
+    <!-- GSAPも -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
+    <script type="module" src="main.js"></script>
+    <!-- CSSを調整 -->
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="container"></div>
+    <div id="rangeSliderContainer">
+      <input type="range" id="rangeSlider" min="0" max="1" step="0.01" />
+    </div>
+  </body>
+</html>
