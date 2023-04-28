@@ -37,7 +37,7 @@ document.body.appendChild(renderer.domElement);
 // インプット要素の制御
 const elementInput = document.querySelector("input#rangeSlider");
 elementInput.addEventListener("input", onInputChange);
-elementInput.focus()
+// elementInput.focus(); // フォーカスを当てるのもヨシ（だが、ICS MEDIAのiframe掲載に不向きだったのでコメントアウト）
 
 // マウスホイール対応
 window.addEventListener(

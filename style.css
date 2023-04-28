@@ -23,9 +23,14 @@ body {
 #rangeSliderContainer {
   position: absolute;
   z-index: 2;
-  bottom: 50px;
+  bottom: 48px;
   width: 100%;
   text-align: center;
+}
+@media (max-width: 768px) {
+  #rangeSliderContainer {
+    bottom: 24px;
+  }
 }
 
 input[type="range"] {
