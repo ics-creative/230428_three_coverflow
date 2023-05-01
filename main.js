@@ -24,7 +24,7 @@ const cards = [];
 const scene = new THREE.Scene();
 
 // カメラを作成
-const camera = new THREE.PerspectiveCamera();
+const camera = new THREE.PerspectiveCamera(30);
 scene.add(camera);
 
 // レンダラーを作成
@@ -113,32 +113,31 @@ function onInputChange() {
  */
 function moveSlide(id) {
   // 遷移先が現在のスライド番号と同じであれば処理を終了
-  if (currentPage === id) return;
+  if (currentPage === id) {
+    return;
+  }
 
   for (let i = 0; i < MAX_SLIDE; i++) {
     // 移動値を初期化
-    let targetX = 0;
+    let targetX = MARGIN_X * (i - id); // X座標の計算
     let targetZ = 0;
     let targetRot = 0;
 
-    // X座標の計算
-    targetX = MARGIN_X * (i - id);
-
     // 中央のスライド画像より左側のもの
     if (i < id) {
-      targetX -= ITEM_W * 0.6;
-      targetZ = ITEM_W + 10 * (id - i);
+      targetX -= ITEM_W * 0.6; // 余白分ずらす
+      targetZ = ITEM_W; // 奥側へ配置
       targetRot = +45 * (Math.PI / 180);
     }
     // 中央のスライド画像より右側のもの
     else if (i > id) {
-      targetX += ITEM_W * 0.6;
-      targetZ = ITEM_W - 10 * (id - i);
+      targetX += ITEM_W * 0.6; // 余白分ずらす
+      targetZ = ITEM_W; // 奥側へ配置
       targetRot = -45 * (Math.PI / 180);
     }
     // 中央のスライド画像
     else {
-      targetX += 0;
+      targetX = 0;
       targetZ = 0;
       targetRot = 0;
     }
@@ -146,23 +145,22 @@ function moveSlide(id) {
     // 対象のカードの参照
     const card = cards[i];
 
-    // タイムラインを作成
-    // 上書き可能な指定とする
-    const timeline = gsap.timeline({ overwrite: true });
-
     // 配置座標を指定
-    timeline.to(
-      card.position,
-      { x: targetX, z: -1 * targetZ, duration: 1.8, ease: "expo.out" },
-      0
-    );
+    gsap.to(card.position, {
+      x: targetX,
+      z: -1 * targetZ,
+      duration: 1.8, // 1.8秒かけて移動
+      ease: "expo.out", // 強めのイージングを指定
+      overwrite: true, // 上書き許可
+    });
 
     // 角度を動かす
-    timeline.to(
-      card.rotation,
-      { y: targetRot, duration: 0.9, ease: "expo.out" },
-      0
-    );
+    gsap.to(card.rotation, {
+      y: targetRot,
+      duration: 0.9, // 0.9秒かけて移動
+      ease: "expo.out", // 強めのイージングを指定
+      overwrite: true, // 上書き許可
+    });
   }
 
   currentPage = id;
@@ -186,7 +184,6 @@ function tick() {
  * カバーフローのカード
  */
 class Card extends THREE.Object3D {
-
   /**
    * @param index {number}
    */
