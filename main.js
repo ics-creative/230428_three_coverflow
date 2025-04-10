@@ -56,7 +56,7 @@ window.addEventListener(
  */
 function init() {
   // ライト
-  const pointLight = new THREE.PointLight(0xffffff, 4, 1000);
+  const pointLight = new THREE.PointLight(0xffffff, 1000000, 1000);
   pointLight.position.set(0, 0, 500);
   scene.add(pointLight);
 
@@ -76,10 +76,12 @@ function init() {
   camera.lookAt(new THREE.Vector3(0, 0, 0));
 
   // 背景の生成
+  const bgTexture = new THREE.TextureLoader().load(URL_BG);
+  bgTexture.colorSpace = THREE.SRGBColorSpace;
   const meshBg = new THREE.Mesh(
     new THREE.PlaneGeometry(3000, 1000),
     new THREE.MeshBasicMaterial({
-      map: new THREE.TextureLoader().load(URL_BG),
+      map: bgTexture,
     })
   );
   meshBg.position.z = -500;
@@ -191,6 +193,7 @@ class Card extends THREE.Object3D {
     super();
 
     const texture = new THREE.TextureLoader().load("./imgs/" + index + ".jpg");
+    texture.colorSpace = THREE.SRGBColorSpace;
 
     // 上面
 
