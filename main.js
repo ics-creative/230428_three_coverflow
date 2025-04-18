@@ -27,9 +27,10 @@ const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(30);
 scene.add(camera);
 
-// レンダラーを作成
-const renderer = new THREE.WebGLRenderer({ antialias: true });
+// レンダラーを作成 (トップレベルawaitを使用)
+const renderer = new THREE.WebGPURenderer({ antialias: true });
 renderer.setPixelRatio(devicePixelRatio);
+await renderer.init(); // WebGPURendererの初期化完了を待つ
 
 // エレメントを追加
 document.body.appendChild(renderer.domElement);
