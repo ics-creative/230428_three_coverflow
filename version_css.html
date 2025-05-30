@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CSS Cover Flow - GSAP版</title>
+    <style>
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background: black url("./imgs/bg.png") center center / cover no-repeat;
+        color: #fff;
+        font-family: sans-serif;
+      }
+
+      .coverflow-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none;
+        perspective: 1500px;
+        perspective-origin: center center;
+      }
+
+      .coverflow {
+        position: relative;
+        width: 100vw;
+        height: 60vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none;
+        transform-style: preserve-3d;
+      }
+
+      .cover-group {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 256px;
+        height: 256px;
+        transform: translate(-50%, -50%) translateZ(0);
+        pointer-events: auto;
+        transform-style: preserve-3d;
+        backface-visibility: visible;
+      }
+
+      .cover,
+      .cover-reflect {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 256px;
+        height: 256px;
+        object-fit: cover;
+        background: #111;
+        user-select: none;
+        pointer-events: none;
+      }
+
+      .cover {
+        z-index: 2;
+        pointer-events: auto;
+      }
+
+      .cover-reflect {
+        z-index: 1;
+        top: 257px;
+        transform: scaleY(-1);
+        opacity: 0.2;
+        mask-image: linear-gradient(
+          to bottom,
+          transparent 30%,
+          rgba(0, 0, 0, 0.6) 100%
+        );
+        pointer-events: none;
+      }
+
+      #rangeSliderContainer {
+        position: absolute;
+        z-index: 10;
+        bottom: 48px;
+        width: 100%;
+        text-align: center;
+      }
+
+      @media (max-width: 768px) {
+        #rangeSliderContainer {
+          bottom: 24px;
+        }
+      }
+
+      #rangeSlider {
+        width: 80%;
+      }
+
+      input[type="range"] {
+        -webkit-appearance: none;
+        border-radius: 10px;
+      }
+
+      input[type="range"]::-webkit-slider-container {
+        background: #000;
+      }
+
+      input[type="range"]::-webkit-slider-runnable-track {
+        width: 30%;
+        height: 12px;
+        background: #000;
+        border-radius: 10px;
+        border: 1px #777 solid;
+      }
+
+      .touch input[type="range"]::-webkit-slider-runnable-track {
+        height: 32px;
+        border-radius: 32px;
+      }
+
+      input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        height: 10px;
+        width: 30%;
+        border-radius: 10px;
+        border: 1px #000 solid;
+        background: #777;
+      }
+
+      .touch input[type="range"]::-webkit-slider-thumb {
+        height: 30px;
+        border-radius: 30px;
+      }
+
+      input[type="range"]:focus {
+        outline: rgba(255, 255, 255, 0.2) solid 2px;
+      }
+
+      input[type="range"]:focus::-webkit-slider-runnable-track {
+        background: #222;
+      }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+  </head>
+
+  <body>
+    <div class="coverflow-container">
+      <div class="coverflow" id="coverflow">
+        <!-- 44個のcover-groupを生成 -->
+        <div class="cover-group">
+          <img class="cover" src="./imgs/0.jpg" alt="" /><img
+            class="cover-reflect"
+            src="./imgs/0.jpg"
+            alt=""
+          />
+        </div>
+        <div class="cover-group">
+          <img class="cover" src="./imgs/1.jpg" alt="" /><img
+            class="cover-reflect"
+            src="./imgs/1.jpg"
+            alt=""
+          />
+        </div>
+        <div class="cover-group">
+          <img class="cover" src="./imgs/2.jpg" alt="" /><img
+            class="cover-reflect"
+            src="./imgs/2.jpg"
+            alt=""
+          />
+        </div>
+        <div class="cover-group">
+          <img class="cover" src="./imgs/3.jpg" alt="" /><img
+            class="cover-reflect"
+            src="./imgs/3.jpg"
+            alt=""
+          />
+        </div>
+        <div class="cover-group">
+          <img class="cover" src="./imgs/4.jpg" alt="" /><img
+            class="cover-reflect"
+            src="./imgs/4.jpg"
+            alt=""
+          />
+        </div>
+        <div class="cover-group">
+          <img class="cover" src="./imgs/5.jpg" alt="" /><img
+            class="cover-reflect"
+            src="./imgs/5.jpg"
+            alt=""
+          />
+        </div>
+        <div class="cover-group">
+          <img class="cover" src="./imgs/6.jpg" alt="" /><img
+            class="cover-reflect"
+            src="./imgs/6.jpg"
+            alt=""
+          />
+        </div>
+        <div class="cover-group">
+          <img class="cover" src="./imgs/7.jpg" alt="" /><img
+            class="cover-reflect"
+            src="./imgs/7.jpg"
+            alt=""
+          />
+        </div>
+        <div class="cover-group">
+          <img class="cover" src="./imgs/8.jpg" alt="" /><img
+            class="cover-reflect"
+            src="./imgs/8.jpg"
+            alt=""
+          />
+        </div>
+        <div class="cover-group">
+          <img class="cover" src="./imgs/9.jpg" alt="" /><img
+            class="cover-reflect"
+            src="./imgs/9.jpg"
+            alt=""
+          />
+        </div>
+        <div class="cover-group">
+          <img class="cover" src="./imgs/10.jpg" alt="" /><img
+            class="cover-reflect"
+            src="./imgs/10.jpg"
+            alt=""
+          />
+        </div>
+        <div class="cover-group">
+          <img class="cover" src="./imgs/11.jpg" alt="" /><img
+            class="cover-reflect"
+            src="./imgs/11.jpg"
+            alt=""
+          />
+        </div>
+        <div class="cover-group">
+          <img class="cover" src="./imgs/12.jpg" alt="" /><img
+            class="cover-reflect"
+            src="./imgs/12.jpg"
+            alt=""
+          />
+        </div>
+        <div class="cover-group">
+          <img class="cover" src="./imgs/13.jpg" alt="" /><img
+            class="cover-reflect"
+            src="./imgs/13.jpg"
+            alt=""
+          />
+        </div>
+        <div class="cover-group">
+          <img class="cover" src="./imgs/14.jpg" alt="" /><img
+            class="cover-reflect"
+            src="./imgs/14.jpg"
+            alt=""
+          />
+        </div>
+        <div class="cover-group">
+          <img class="cover" src="./imgs/15.jpg" alt="" /><img
+            class="cover-reflect"
+            src="./imgs/15.jpg"
+            alt=""
+          />
+        </div>
+        <div class="cover-group">
+          <img class="cover" src="./imgs/16.jpg" alt="" /><img
+            class="cover-reflect"
+            src="./imgs/16.jpg"
+            alt=""
+          />
+        </div>
+        <div class="cover-group">
+          <img class="cover" src="./imgs/17.jpg" alt="" /><img
+            class="cover-reflect"
+            src="./imgs/17.jpg"
+            alt=""
+          />
+        </div>
+        <div class="cover-group">
+          <img class="cover" src="./imgs/18.jpg" alt="" /><img
+            class="cover-reflect"
+            src="./imgs/18.jpg"
+            alt=""
+          />
+        </div>
+        <div class="cover-group">
+          <img class="cover" src="./imgs/19.jpg" alt="" /><img
+            class="cover-reflect"
+            src="./imgs/19.jpg"
+            alt=""
+          />
+        </div>
+        <div class="cover-group">
+          <img class="cover" src="./imgs/20.jpg" alt="" /><img
+            class="cover-reflect"
+            src="./imgs/20.jpg"
+            alt=""
+          />
+        </div>
+        <div class="cover-group">
+          <img class="cover" src="./imgs/21.jpg" alt="" /><img
+            class="cover-reflect"
+            src="./imgs/21.jpg"
+            alt=""
+          />
+        </div>
+        <div class="cover-group">
+          <img class="cover" src="./imgs/22.jpg" alt="" /><img
+            class="cover-reflect"
+            src="./imgs/22.jpg"
+            alt=""
+          />
+        </div>
+        <div class="cover-group">
+          <img class="cover" src="./imgs/23.jpg" alt="" /><img
+            class="cover-reflect"
+            src="./imgs/23.jpg"
+            alt=""
+          />
+        </div>
+        <div class="cover-group">
+          <img class="cover" src="./imgs/24.jpg" alt="" /><img
+            class="cover-reflect"
+            src="./imgs/24.jpg"
+            alt=""
+          />
+        </div>
+        <div class="cover-group">
+          <img class="cover" src="./imgs/25.jpg" alt="" /><img
+            class="cover-reflect"
+            src="./imgs/25.jpg"
+            alt=""
+          />
+        </div>
+        <div class="cover-group">
+          <img class="cover" src="./imgs/26.jpg" alt="" /><img
+            class="cover-reflect"
+            src="./imgs/26.jpg"
+            alt=""
+          />
+        </div>
+        <div class="cover-group">
+          <img class="cover" src="./imgs/27.jpg" alt="" /><img
+            class="cover-reflect"
+            src="./imgs/27.jpg"
+            alt=""
+          />
+        </div>
+        <div class="cover-group">
+          <img class="cover" src="./imgs/28.jpg" alt="" /><img
+            class="cover-reflect"
+            src="./imgs/28.jpg"
+            alt=""
+          />
+        </div>
+        <div class="cover-group">
+          <img class="cover" src="./imgs/29.jpg" alt="" /><img
+            class="cover-reflect"
+            src="./imgs/29.jpg"
+            alt=""
+          />
+        </div>
+        <div class="cover-group">
+          <img class="cover" src="./imgs/30.jpg" alt="" /><img
+            class="cover-reflect"
+            src="./imgs/30.jpg"
+            alt=""
+          />
+        </div>
+        <div class="cover-group">
+          <img class="cover" src="./imgs/31.jpg" alt="" /><img
+            class="cover-reflect"
+            src="./imgs/31.jpg"
+            alt=""
+          />
+        </div>
+        <div class="cover-group">
+          <img class="cover" src="./imgs/32.jpg" alt="" /><img
+            class="cover-reflect"
+            src="./imgs/32.jpg"
+            alt=""
+          />
+        </div>
+        <div class="cover-group">
+          <img class="cover" src="./imgs/33.jpg" alt="" /><img
+            class="cover-reflect"
+            src="./imgs/33.jpg"
+            alt=""
+          />
+        </div>
+        <div class="cover-group">
+          <img class="cover" src="./imgs/34.jpg" alt="" /><img
+            class="cover-reflect"
+            src="./imgs/34.jpg"
+            alt=""
+          />
+        </div>
+        <div class="cover-group">
+          <img class="cover" src="./imgs/35.jpg" alt="" /><img
+            class="cover-reflect"
+            src="./imgs/35.jpg"
+            alt=""
+          />
+        </div>
+        <div class="cover-group">
+          <img class="cover" src="./imgs/36.jpg" alt="" /><img
+            class="cover-reflect"
+            src="./imgs/36.jpg"
+            alt=""
+          />
+        </div>
+        <div class="cover-group">
+          <img class="cover" src="./imgs/37.jpg" alt="" /><img
+            class="cover-reflect"
+            src="./imgs/37.jpg"
+            alt=""
+          />
+        </div>
+        <div class="cover-group">
+          <img class="cover" src="./imgs/38.jpg" alt="" /><img
+            class="cover-reflect"
+            src="./imgs/38.jpg"
+            alt=""
+          />
+        </div>
+        <div class="cover-group">
+          <img class="cover" src="./imgs/39.jpg" alt="" /><img
+            class="cover-reflect"
+            src="./imgs/39.jpg"
+            alt=""
+          />
+        </div>
+        <div class="cover-group">
+          <img class="cover" src="./imgs/40.jpg" alt="" /><img
+            class="cover-reflect"
+            src="./imgs/40.jpg"
+            alt=""
+          />
+        </div>
+        <div class="cover-group">
+          <img class="cover" src="./imgs/41.jpg" alt="" /><img
+            class="cover-reflect"
+            src="./imgs/41.jpg"
+            alt=""
+          />
+        </div>
+        <div class="cover-group">
+          <img class="cover" src="./imgs/42.jpg" alt="" /><img
+            class="cover-reflect"
+            src="./imgs/42.jpg"
+            alt=""
+          />
+        </div>
+        <div class="cover-group">
+          <img class="cover" src="./imgs/43.jpg" alt="" /><img
+            class="cover-reflect"
+            src="./imgs/43.jpg"
+            alt=""
+          />
+        </div>
+      </div>
+    </div>
+    <div id="rangeSliderContainer">
+      <input type="range" id="rangeSlider" min="0" max="1" step="0.01" />
+    </div>
+    <script>
+      // Three.js版の定数を再現
+      const MARGIN_X = 80;
+      const ITEM_W = 256;
+      const ITEM_H = 256;
+      const MAX_SLIDE = 44;
+      const ANIMATION_DURATION = 1.8;
+      const ROTATION_DURATION = 0.9;
+
+      const groups = Array.from(document.querySelectorAll(".cover-group"));
+      const covers = Array.from(document.querySelectorAll(".cover"));
+      const slider = document.getElementById("rangeSlider");
+      const maxIndex = groups.length - 1;
+      let current = Math.floor(maxIndex / 2);
+
+      // Three.js版のcalculateCardPosition関数を正確に再現
+      function calculateCardPosition(index, targetId) {
+        let targetX = MARGIN_X * (index - targetId);
+        let targetZ = 0;
+        let targetRot = 0;
+
+        if (index < targetId) {
+          targetX -= ITEM_W * 0.6;
+          targetZ = ITEM_W;
+          targetRot = +45;
+        } else if (index > targetId) {
+          targetX += ITEM_W * 0.6;
+          targetZ = ITEM_W;
+          targetRot = -45;
+        }
+
+        return { x: targetX, z: targetZ, rotation: targetRot };
+      }
+
+      function updateCoverflow(index, animate = true) {
+        groups.forEach((group, i) => {
+          const {
+            x: targetX,
+            z: targetZ,
+            rotation: targetRot,
+          } = calculateCardPosition(i, index);
+
+          let scale = 0.7;
+          let cover = group.querySelector(".cover");
+          let reflect = group.querySelector(".cover-reflect");
+          let className = "cover";
+
+          if (i === index) {
+            scale = 1;
+            className = "cover center";
+          }
+
+          if (animate) {
+            gsap.to(group, {
+              duration: ANIMATION_DURATION,
+              scale: scale,
+              x: targetX,
+              z: -targetZ * 1.8,
+              rotateY: targetRot,
+              ease: "expo.out",
+              overwrite: true,
+            });
+            gsap.to(reflect, {
+              duration: ANIMATION_DURATION,
+              ease: "expo.out",
+              overwrite: true,
+            });
+          } else {
+            gsap.set(group, {
+              scale: scale,
+              x: targetX,
+              z: -targetZ * 1.8,
+              rotateY: targetRot,
+            });
+          }
+          cover.className = className;
+        });
+      }
+
+      // スライダーの値からインデックスを計算
+      function onSliderChange() {
+        const val = parseFloat(slider.value);
+        const idx = Math.round(val * maxIndex);
+        if (idx !== current) {
+          current = idx;
+          updateCoverflow(current);
+        }
+      }
+      slider.addEventListener("input", onSliderChange);
+
+      // 初期表示
+      slider.value = (current / maxIndex).toString();
+      updateCoverflow(current, false);
+
+      // ホイールイベント対応
+      document.body.addEventListener(
+        "wheel",
+        (e) => {
+          const delta = Math.sign(e.deltaY);
+          let newIndex = current + delta;
+          newIndex = Math.max(0, Math.min(maxIndex, newIndex));
+          if (newIndex !== current) {
+            current = newIndex;
+            slider.value = (current / maxIndex).toString();
+            updateCoverflow(current);
+          }
+          e.preventDefault();
+        },
+        { passive: false }
+      );
+
+      // カードクリック対応
+      groups.forEach((group, index) => {
+        const coverImg = group.querySelector(".cover");
+        if (coverImg) {
+          coverImg.addEventListener("click", () => {
+            if (index !== current) {
+              current = index;
+              slider.value = (current / maxIndex).toString();
+              updateCoverflow(current);
+            }
+          });
+        }
+      });
+
+      // スワイプ対応
+      let touchStartX = 0;
+      let touchStartValue = 0;
+      const coverflowElem = document.getElementById("coverflow");
+      coverflowElem.addEventListener(
+        "touchstart",
+        (e) => {
+          touchStartX = e.touches[0].clientX;
+          touchStartValue = parseFloat(slider.value);
+        },
+        { passive: true }
+      );
+      coverflowElem.addEventListener(
+        "touchmove",
+        (e) => {
+          const deltaX = e.touches[0].clientX - touchStartX;
+          // Three.js版と同じ計算
+          const slidePixel = ITEM_W * 0.7;
+          const ratio = deltaX / (slidePixel * maxIndex);
+          let newValue = Math.max(0, Math.min(1, touchStartValue - ratio));
+          slider.value = newValue;
+          onSliderChange();
+          e.preventDefault();
+        },
+        { passive: false }
+      );
+    </script>
+  </body>
+</html>
