@@ -2,15 +2,15 @@ import * as THREE from "three";
 import gsap from "gsap";
 
 /** 背景画像のパス */
-const BG_URL = "./imgs/bg.png";
-/** カードの横幅 */
-const CARD_WIDTH = 256;
-/** カードの縦幅 */
-const CARD_HEIGHT = 256;
-/** カードのX座標の間隔 */
-const CARD_MARGIN = 80;
-/** スライドの総数 */
-const TOTAL_SLIDES = 44;
+const URL_BG = "./imgs/bg.png";
+/** 平面の横幅 */
+const ITEM_W = 256;
+/** 平面の縦幅 */
+const ITEM_H = 256;
+/** 平面のX座標の間隔 */
+const MARGIN_X = 80;
+/** スライドの個数 */
+const MAX_SLIDE = 44;
 /** アニメーションの持続時間 */
 const ANIMATION_DURATION = 1.8;
 /** 回転アニメーションの持続時間 */
@@ -96,11 +96,11 @@ function onTouchMove(event) {
   const deltaX = touchX - touchStartX;
 
   // 1スライド分の移動に必要なピクセル数（カード幅の0.7倍で調整）
-  const slidePixel = CARD_WIDTH * 0.7;
+  const slidePixel = ITEM_W * 0.7;
 
   slider.valueAsNumber = Math.max(
     0,
-    Math.min(1, touchStartValue - deltaX / (slidePixel * (TOTAL_SLIDES - 1)))
+    Math.min(1, touchStartValue - deltaX / (slidePixel * (MAX_SLIDE - 1)))
   );
   onSliderChange();
 
@@ -111,7 +111,7 @@ function onTouchMove(event) {
  * スライダー変更イベントハンドラー
  */
 function onSliderChange() {
-  const nextId = Math.round(slider.valueAsNumber * (TOTAL_SLIDES - 1));
+  const nextId = Math.round(slider.valueAsNumber * (MAX_SLIDE - 1));
   moveSlide(nextId);
 }
 
@@ -155,17 +155,17 @@ function moveSlide(id) {
  * @returns {{x: number, z: number, rotation: number}} カードの位置と回転情報
  */
 function calculateCardPosition(index, targetId) {
-  let targetX = CARD_MARGIN * (index - targetId);
+  let targetX = MARGIN_X * (index - targetId);
   let targetZ = 0;
   let targetRot = 0;
 
   if (index < targetId) {
-    targetX -= CARD_WIDTH * 0.6;
-    targetZ = CARD_WIDTH;
+    targetX -= ITEM_W * 0.6;
+    targetZ = ITEM_W;
     targetRot = +45 * (Math.PI / 180);
   } else if (index > targetId) {
-    targetX += CARD_WIDTH * 0.6;
-    targetZ = CARD_WIDTH;
+    targetX += ITEM_W * 0.6;
+    targetZ = ITEM_W;
     targetRot = -45 * (Math.PI / 180);
   }
 
@@ -205,7 +205,7 @@ class Card extends THREE.Object3D {
     // 上面
     const material = new THREE.MeshLambertMaterial({ map: texture });
     const planeTop = new THREE.Mesh(
-      new THREE.PlaneGeometry(CARD_WIDTH, CARD_HEIGHT),
+      new THREE.PlaneGeometry(ITEM_W, ITEM_H),
       material
     );
     this.add(planeTop);
@@ -218,12 +218,12 @@ class Card extends THREE.Object3D {
       opacity: 0.2,
     });
     const planeBottom = new THREE.Mesh(
-      new THREE.PlaneGeometry(CARD_WIDTH, CARD_HEIGHT),
+      new THREE.PlaneGeometry(ITEM_W, ITEM_H),
       materialOpt
     );
     planeBottom.rotation.y = Math.PI;
     planeBottom.rotation.z = Math.PI;
-    planeBottom.position.y = -CARD_HEIGHT - 1;
+    planeBottom.position.y = -ITEM_H - 1;
     this.add(planeBottom);
   }
 }
@@ -238,7 +238,7 @@ async function init() {
   scene.add(pointLight);
 
   // カードの生成
-  for (let i = 0; i < TOTAL_SLIDES; i++) {
+  for (let i = 0; i < MAX_SLIDE; i++) {
     const card = new Card(i);
     scene.add(card);
     cards[i] = card;
@@ -249,7 +249,7 @@ async function init() {
   camera.lookAt(new THREE.Vector3(0, 0, 0));
 
   // 背景の生成
-  const bgTexture = new THREE.TextureLoader().load(BG_URL);
+  const bgTexture = new THREE.TextureLoader().load(URL_BG);
   bgTexture.colorSpace = THREE.SRGBColorSpace;
   const meshBg = new THREE.Mesh(
     new THREE.PlaneGeometry(3000, 1000),
@@ -259,7 +259,7 @@ async function init() {
   scene.add(meshBg);
 
   // 初期表示
-  moveSlide(TOTAL_SLIDES / 2);
+  moveSlide(MAX_SLIDE / 2);
   onResize();
   tick();
 }
