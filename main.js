@@ -1,7 +1,6 @@
 import * as THREE from "three";
 import gsap from "gsap";
 
-
 /** 背景画像のパス */
 const BG_URL = "./imgs/bg.png";
 /** カードの横幅 */
@@ -95,11 +94,13 @@ function onTouchMove(event) {
 
   const touchX = event.touches[0].clientX;
   const deltaX = touchX - touchStartX;
-  const swipeRatio = deltaX / window.innerWidth;
+
+  // 1スライド分の移動に必要なピクセル数（カード幅の0.7倍で調整）
+  const slidePixel = CARD_WIDTH * 0.7;
 
   slider.valueAsNumber = Math.max(
     0,
-    Math.min(1, touchStartValue - swipeRatio * 2)
+    Math.min(1, touchStartValue - deltaX / (slidePixel * (TOTAL_SLIDES - 1)))
   );
   onSliderChange();
 
